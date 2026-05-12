@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, CreditCard, Calendar, Dumbbell,
   BarChart3, Settings, Zap, ChevronLeft, ChevronRight,
   ShieldCheck, LogOut, Brain, Salad, MessageSquare, Sparkles,
-  Camera, Activity
+  Camera, Activity, Globe, TrendingUp
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
@@ -41,6 +41,16 @@ const navSections: NavSection[] = [
       { label: "My Workouts", href: "/dashboard/user/workouts", icon: Dumbbell },
       { label: "Progress", href: "/dashboard/user/progress", icon: BarChart3 },
       { label: "Analytics", href: "/dashboard/admin/analytics", icon: BarChart3, adminOnly: true },
+      { label: "Growth", href: "/dashboard/admin/social", icon: TrendingUp, adminOnly: true, badge: "NEW" },
+    ],
+  },
+  {
+    label: "Social Fitness",
+    items: [
+      { label: "Community Feed", href: "/dashboard/social", icon: Globe, badge: "LIVE" },
+      { label: "Challenges", href: "/dashboard/social/challenges", icon: Trophy },
+      { label: "Leaderboard", href: "/dashboard/social/leaderboard", icon: Medal },
+      { label: "Marketplace", href: "/dashboard/social/trainers", icon: Users },
     ],
   },
   {

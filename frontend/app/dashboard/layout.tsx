@@ -6,6 +6,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { useAuthStore } from "@/store/authStore";
 import { Sidebar, Topbar } from "@/components/layout";
 import { Loader2 } from "lucide-react";
+import { GamificationOverlay } from "@/components/gamification/GamificationOverlay";
 
 export default function DashboardLayout({
   children,
@@ -45,6 +46,9 @@ export default function DashboardLayout({
       {/* Background effects */}
       <div className="fixed inset-0 bg-grid opacity-30 pointer-events-none" />
       <div className="fixed top-0 right-1/3 w-[600px] h-[600px] rounded-full bg-[#00F5D4]/3 blur-[120px] pointer-events-none" />
+
+      {/* Gamification Feedback */}
+      <GamificationOverlay />
 
       {/* Sidebar */}
       <Sidebar isOpen={sidebarOpen} onToggle={() => setSidebarOpen(!sidebarOpen)} />
