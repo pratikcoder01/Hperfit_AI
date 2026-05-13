@@ -7,7 +7,8 @@ import {
   LayoutDashboard, Users, CreditCard, Calendar, Dumbbell,
   BarChart3, Settings, Zap, ChevronLeft, ChevronRight,
   ShieldCheck, LogOut, Brain, Salad, MessageSquare, Sparkles,
-  Camera, Activity, Globe, TrendingUp, Smartphone, Building2
+  Camera, Activity, Globe, TrendingUp, Smartphone, Building2,
+  Mic, Trophy, Medal
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
@@ -199,7 +200,7 @@ export function Sidebar({ isOpen, onToggle }: SidebarProps) {
                   const activeColor = section.aiSection ? "#7B2CBF" : "#00F5D4";
 
                   return (
-                    <Link key={item.href} href={item.href}>
+                    <Link key={item.label} href={item.href}>
                       <motion.div
                         className={cn(
                           "flex items-center gap-3 px-3 py-2.5 rounded-lg transition-all duration-200 group relative cursor-pointer",

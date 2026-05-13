@@ -2,13 +2,12 @@
 
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type { AuthUser, AuthTokens, LoginCredentials, RegisterPayload } from "@/types";
-import apiClient from "@/lib/api-client";
+import type { AuthUser, LoginCredentials, RegisterPayload } from "@/types";
+import { supabase } from "@/lib/supabase";
 
 interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
   isLoading: boolean;
   error: string | null;
@@ -20,6 +19,7 @@ interface AuthState {
   refreshAuth: () => Promise<void>;
   clearError: () => void;
   setUser: (user: AuthUser) => void;
+  initializeAuth: () => Promise<void>;
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -27,46 +27,94 @@ export const useAuthStore = create<AuthState>()(
     (set, get) => ({
       user: null,
       accessToken: null,
-      refreshToken: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
 
+      initializeAuth: async () => {
+        set({ isLoading: true });
+        try {
+          const { data: { session } } = await supabase.auth.getSession();
+          
+          if (session) {
+            const { data: { user: supabaseUser } } = await supabase.auth.getUser();
+            
+            if (supabaseUser) {
+              // Fetch user profile from profiles table
+              const { data: profile } = await supabase
+                .from('profiles')
+                .select('*')
+                .eq('id', supabaseUser.id)
+                .single();
+
+              const authUser: AuthUser = {
+                id: supabaseUser.id,
+                email: supabaseUser.email!,
+                full_name: (profile as any)?.full_name || supabaseUser.user_metadata?.full_name || '',
+                avatar_url: (profile as any)?.avatar_url || supabaseUser.user_metadata?.avatar_url || null,
+                role: (profile as any)?.role || 'member',
+                xp: (profile as any)?.xp || 0,
+                level: (profile as any)?.level || 1,
+                rank: (profile as any)?.rank || 'Bronze',
+                created_at: (profile as any)?.created_at || new Date().toISOString(),
+              };
+
+              set({
+                user: authUser,
+                accessToken: session.access_token,
+                isAuthenticated: true,
+                isLoading: false,
+              });
+            }
+          } else {
+            set({ isLoading: false });
+          }
+        } catch (error) {
+          console.error('Auth initialization error:', error);
+          set({ isLoading: false });
+        }
+      },
+
       login: async (credentials) => {
         set({ isLoading: true, error: null });
         try {
-          // FastAPI OAuth2 expects form data for /auth/login
-          const formData = new URLSearchParams();
-          formData.append("username", credentials.email);
-          formData.append("password", credentials.password);
-
-          const { data: tokens } = await apiClient.post<AuthTokens>(
-            "/auth/login",
-            formData,
-            { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
-          );
-
-          // Store tokens
-          localStorage.setItem("hf_access_token", tokens.access_token);
-          localStorage.setItem("hf_refresh_token", tokens.refresh_token);
-
-          // Fetch user profile
-          const { data: user } = await apiClient.get<AuthUser>("/auth/me", {
-            headers: { Authorization: `Bearer ${tokens.access_token}` },
+          const { data, error } = await supabase.auth.signInWithPassword({
+            email: credentials.email,
+            password: credentials.password,
           });
 
-          set({
-            user,
-            accessToken: tokens.access_token,
-            refreshToken: tokens.refresh_token,
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          });
+          if (error) throw error;
+
+          if (data.user) {
+            // Fetch user profile from profiles table
+            const { data: profile } = await supabase
+              .from('profiles')
+              .select('*')
+              .eq('id', data.user.id)
+              .single();
+
+            const authUser: AuthUser = {
+              id: data.user.id,
+              email: data.user.email!,
+              full_name: (profile as any)?.full_name || data.user.user_metadata?.full_name || '',
+              avatar_url: (profile as any)?.avatar_url || data.user.user_metadata?.avatar_url || null,
+              role: (profile as any)?.role || 'member',
+              xp: (profile as any)?.xp || 0,
+              level: (profile as any)?.level || 1,
+              rank: (profile as any)?.rank || 'Bronze',
+              created_at: (profile as any)?.created_at || new Date().toISOString(),
+            };
+
+            set({
+              user: authUser,
+              accessToken: data.session.access_token,
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+          }
         } catch (error: unknown) {
-          const message =
-            (error as { response?: { data?: { detail?: string } } })?.response
-              ?.data?.detail || "Login failed. Please check your credentials.";
+          const message = (error as { message?: string })?.message || "Login failed. Please check your credentials.";
           set({ error: message, isLoading: false });
           throw error;
         }
@@ -75,45 +123,64 @@ export const useAuthStore = create<AuthState>()(
       register: async (payload) => {
         set({ isLoading: true, error: null });
         try {
-          await apiClient.post("/auth/register", payload);
-          set({ isLoading: false });
+          const { data, error } = await supabase.auth.signUp({
+            email: payload.email,
+            password: payload.password,
+            options: {
+              data: {
+                full_name: payload.full_name,
+              },
+            },
+          });
+
+          if (error) throw error;
+
+          if (data.user) {
+            // Create profile in profiles table
+            const { error: profileError } = await supabase
+              .from('profiles')
+              .insert({
+                id: data.user.id,
+                email: data.user.email!,
+                full_name: payload.full_name,
+                role: 'member',
+                xp: 0,
+                level: 1,
+                rank: 'Bronze',
+              } as any);
+
+            if (profileError) throw profileError;
+
+            set({ isLoading: false });
+          }
         } catch (error: unknown) {
-          const message =
-            (error as { response?: { data?: { detail?: string } } })?.response
-              ?.data?.detail || "Registration failed. Please try again.";
+          const message = (error as { message?: string })?.message || "Registration failed. Please try again.";
           set({ error: message, isLoading: false });
           throw error;
         }
       },
 
-      logout: () => {
-        localStorage.removeItem("hf_access_token");
-        localStorage.removeItem("hf_refresh_token");
+      logout: async () => {
+        await supabase.auth.signOut();
         set({
           user: null,
           accessToken: null,
-          refreshToken: null,
           isAuthenticated: false,
           error: null,
         });
       },
 
       refreshAuth: async () => {
-        const { refreshToken } = get();
-        if (!refreshToken) return;
-
         try {
-          const { data } = await apiClient.post<AuthTokens>("/auth/refresh", {
-            refresh_token: refreshToken,
-          });
+          const { data, error } = await supabase.auth.refreshSession();
+          
+          if (error) throw error;
 
-          localStorage.setItem("hf_access_token", data.access_token);
-          localStorage.setItem("hf_refresh_token", data.refresh_token);
-
-          set({
-            accessToken: data.access_token,
-            refreshToken: data.refresh_token,
-          });
+          if (data.session) {
+            set({
+              accessToken: data.session.access_token,
+            });
+          }
         } catch {
           get().logout();
         }
@@ -128,7 +195,6 @@ export const useAuthStore = create<AuthState>()(
       partialize: (state) => ({
         user: state.user,
         accessToken: state.accessToken,
-        refreshToken: state.refreshToken,
         isAuthenticated: state.isAuthenticated,
       }),
     }

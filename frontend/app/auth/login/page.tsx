@@ -148,6 +148,7 @@ export default function LoginPage() {
             <motion.button
               type="submit"
               disabled={isLoading}
+              suppressHydrationWarning
               className="w-full flex items-center justify-center gap-2 bg-[#00F5D4] text-[#0B0F19] font-semibold py-3.5 rounded-xl text-sm transition-all duration-300 disabled:opacity-60 disabled:cursor-not-allowed"
               whileHover={{ boxShadow: "0 0 30px rgba(0,245,212,0.30)" }}
               whileTap={{ scale: 0.98 }}

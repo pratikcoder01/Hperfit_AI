@@ -11,7 +11,11 @@ export interface AuthUser {
   full_name: string;
   role: UserRole;
   avatar_url?: string;
-  is_active: boolean;
+  is_active?: boolean;
+  xp?: number;
+  level?: number;
+  rank?: string;
+  created_at?: string;
 }
 
 export interface AuthTokens {
