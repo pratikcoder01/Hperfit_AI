@@ -78,6 +78,50 @@ export const useAuthStore = create<AuthState>()(
       login: async (credentials) => {
         set({ isLoading: true, error: null });
         try {
+          // --- DEMO CREDENTIALS BYPASS ---
+          if (credentials.email === "admin@hyperfitness.io" && credentials.password === "admin123") {
+            set({
+              user: {
+                id: "demo-admin",
+                email: "admin@hyperfitness.io",
+                full_name: "Admin User",
+                avatar_url: null,
+                role: "admin",
+                xp: 9999,
+                level: 100,
+                rank: "Grandmaster",
+                created_at: new Date().toISOString(),
+              },
+              accessToken: "demo-admin-token",
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return;
+          }
+          
+          if (credentials.email === "user@hyperfitness.io" && credentials.password === "user123") {
+            set({
+              user: {
+                id: "demo-user",
+                email: "user@hyperfitness.io",
+                full_name: "Demo Member",
+                avatar_url: null,
+                role: "member",
+                xp: 120,
+                level: 3,
+                rank: "Bronze",
+                created_at: new Date().toISOString(),
+              },
+              accessToken: "demo-user-token",
+              isAuthenticated: true,
+              isLoading: false,
+              error: null,
+            });
+            return;
+          }
+          // --- END DEMO BYPASS ---
+
           const { data, error } = await supabase.auth.signInWithPassword({
             email: credentials.email,
             password: credentials.password,
