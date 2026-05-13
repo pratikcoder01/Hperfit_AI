@@ -8,7 +8,7 @@ import {
   BarChart3, Settings, Zap, ChevronLeft, ChevronRight,
   ShieldCheck, LogOut, Brain, Salad, MessageSquare, Sparkles,
   Camera, Activity, Globe, TrendingUp, Smartphone, Building2,
-  Mic, Trophy, Medal, Cpu, Network
+  Mic, Trophy, Medal, Cpu, Network, Orbit
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
@@ -63,9 +63,10 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "Planetary AGI (Phases 6-7)",
+    label: "Universal AGI (Phases 6-8)",
     aiSection: true,
     items: [
+      { label: "Universal Matrix", href: "/dashboard/universal", icon: Orbit, badge: "PHASE 8" },
       { label: "Neural Hub", href: "/dashboard/neural", icon: Network, badge: "PHASE 7" },
       { label: "AGI Control Center", href: "/dashboard/agi", icon: Cpu, badge: "PHASE 6" },
       { label: "AI Insights", href: "/dashboard/ai/insights", icon: Brain },
