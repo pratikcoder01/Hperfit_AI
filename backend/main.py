@@ -126,6 +126,8 @@ async def general_exception_handler(request: Request, exc: Exception):
     )
 
 
+from app.ai.router import router as ai_router
+
 # ── Register Routers ──────────────────────────
 prefix = settings.API_PREFIX
 
@@ -134,6 +136,7 @@ app.include_router(users_router, prefix=prefix)
 app.include_router(attendance_router, prefix=prefix)
 app.include_router(analytics_router, prefix=prefix)
 app.include_router(ml_router, prefix=prefix)
+app.include_router(ai_router, prefix=prefix)
 
 
 # ── Health Check ──────────────────────────────
