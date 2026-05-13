@@ -66,6 +66,7 @@ const navSections: NavSection[] = [
     label: "Superintelligence (Phases 6-10)",
     aiSection: true,
     items: [
+      { label: "HyperCoach Live", href: "/dashboard/hypercoach", icon: Zap, badge: "NEW" },
       { label: "Transcendent Nexus", href: "/dashboard/transcendent", icon: Infinity, badge: "PHASE 10" },
       { label: "Cosmic Network", href: "/dashboard/cosmic", icon: Rocket, badge: "PHASE 9" },
       { label: "Universal Matrix", href: "/dashboard/universal", icon: Orbit, badge: "PHASE 8" },
