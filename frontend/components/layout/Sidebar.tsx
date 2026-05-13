@@ -8,7 +8,7 @@ import {
   BarChart3, Settings, Zap, ChevronLeft, ChevronRight,
   ShieldCheck, LogOut, Brain, Salad, MessageSquare, Sparkles,
   Camera, Activity, Globe, TrendingUp, Smartphone, Building2,
-  Mic, Trophy, Medal
+  Mic, Trophy, Medal, Cpu
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
@@ -63,9 +63,10 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "AI Intelligence",
+    label: "AGI Intelligence (Phase 6)",
     aiSection: true,
     items: [
+      { label: "AGI Control Center", href: "/dashboard/agi", icon: Cpu, badge: "PHASE 6" },
       { label: "AI Insights", href: "/dashboard/ai/insights", icon: Brain },
       { label: "Workout AI", href: "/dashboard/ai/workout", icon: Dumbbell },
       { label: "Diet Planner", href: "/dashboard/ai/diet", icon: Salad },
