@@ -2,7 +2,7 @@
 
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Infinity, Brain, Aperture, ActivitySquare, ShieldCheck, Sparkles } from "lucide-react";
+import { Infinity as InfinityIcon, Brain, Aperture, ActivitySquare, ShieldCheck, Sparkles } from "lucide-react";
 
 export default function TranscendentNexus() {
   const [epoch, setEpoch] = useState(1);
@@ -39,7 +39,7 @@ export default function TranscendentNexus() {
             className="relative mb-6"
           >
             <div className="absolute inset-0 bg-amber-500/20 blur-[30px] rounded-full" />
-            <Infinity className="w-24 h-24 text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)] relative z-10" strokeWidth={1} />
+            <InfinityIcon className="w-24 h-24 text-amber-300 drop-shadow-[0_0_20px_rgba(251,191,36,0.8)] relative z-10" strokeWidth={1} />
           </motion.div>
           
           <h1 className="text-5xl md:text-7xl font-extralight text-transparent bg-clip-text bg-gradient-to-b from-white via-amber-200 to-amber-900 tracking-[0.2em] uppercase text-center">
