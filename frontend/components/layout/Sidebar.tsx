@@ -7,7 +7,7 @@ import {
   LayoutDashboard, Users, CreditCard, Calendar, Dumbbell,
   BarChart3, Settings, Zap, ChevronLeft, ChevronRight,
   ShieldCheck, LogOut, Brain, Salad, MessageSquare, Sparkles,
-  Camera, Activity, Globe, TrendingUp
+  Camera, Activity, Globe, TrendingUp, Smartphone, Building2
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
@@ -42,6 +42,14 @@ const navSections: NavSection[] = [
       { label: "Progress", href: "/dashboard/user/progress", icon: BarChart3 },
       { label: "Analytics", href: "/dashboard/admin/analytics", icon: BarChart3, adminOnly: true },
       { label: "Growth", href: "/dashboard/admin/social", icon: TrendingUp, adminOnly: true, badge: "NEW" },
+      { label: "Enterprise", href: "/dashboard/admin/saas", icon: Building2, adminOnly: true },
+    ],
+  },
+  {
+    label: "Super Platform",
+    items: [
+      { label: "Mobile Hub", href: "/dashboard/mobile", icon: Smartphone, badge: "BETA" },
+      { label: "AI Voice", href: "/dashboard/mobile", icon: Mic },
     ],
   },
   {

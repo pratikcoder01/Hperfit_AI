@@ -32,6 +32,16 @@ class Settings(BaseSettings):
     BCRYPT_ROUNDS: int = 12
     RATE_LIMIT_PER_MINUTE: int = 100
 
+    # ── Phase 4 Scaling & Cloud ───────────────
+    REDIS_URL: Optional[str] = "redis://localhost:6379/0"
+    CLOUDINARY_URL: Optional[str] = None
+    CDN_ENABLED: bool = False
+    
+    # Background Workers
+    WORKER_CONCURRENCY: int = 4
+    CELERY_BROKER_URL: Optional[str] = REDIS_URL
+    CELERY_RESULT_BACKEND: Optional[str] = REDIS_URL
+
     class Config:
         env_file = ".env"
         case_sensitive = True

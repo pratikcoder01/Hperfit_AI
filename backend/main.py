@@ -19,6 +19,7 @@ from app.auth.router import router as auth_router
 from app.users.router import router as users_router
 from app.attendance.router import router as attendance_router
 from app.analytics.router import router as analytics_router
+from app.ml.router import router as ml_router
 
 # ── Logging ───────────────────────────────────
 logging.basicConfig(
@@ -132,6 +133,7 @@ app.include_router(auth_router, prefix=prefix)
 app.include_router(users_router, prefix=prefix)
 app.include_router(attendance_router, prefix=prefix)
 app.include_router(analytics_router, prefix=prefix)
+app.include_router(ml_router, prefix=prefix)
 
 
 # ── Health Check ──────────────────────────────

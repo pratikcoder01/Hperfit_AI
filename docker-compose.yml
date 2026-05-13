@@ -1,0 +1,60 @@
+version: '3.8'
+
+services:
+  # ── Backend API ──
+  api:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - hyperfitness_net
+
+  # ── Database ──
+  db:
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_USER: ${DB_USER:-user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-password}
+      POSTGRES_DB: ${DB_NAME:-hyperfitness}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - hyperfitness_net
+
+  # ── Caching & Queues ──
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+    networks:
+      - hyperfitness_net
+
+  # ── Background Worker (Celery/Autonomous AI Coach) ──
+  worker:
+    build: 
+      context: ./backend
+      dockerfile: Dockerfile
+    command: celery -A app.core.worker worker --loglevel=info
+    env_file:
+      - ./backend/.env
+    depends_on:
+      - db
+      - redis
+    networks:
+      - hyperfitness_net
+
+networks:
+  hyperfitness_net:
+    driver: bridge
+
+volumes:
+  postgres_data:
+  redis_data:

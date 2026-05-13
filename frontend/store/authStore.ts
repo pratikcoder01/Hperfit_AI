@@ -5,30 +5,6 @@ import { persist, createJSONStorage } from "zustand/middleware";
 import type { AuthUser, AuthTokens, LoginCredentials, RegisterPayload } from "@/types";
 import apiClient from "@/lib/api-client";
 
-// ── Demo Users (no backend needed) ────────────
-const DEMO_USERS: Record<string, AuthUser & { password: string }> = {
-  "admin@hyperfitness.io": {
-    password: "admin123",
-    id: "demo-admin-001",
-    email: "admin@hyperfitness.io",
-    full_name: "Alex Admin",
-    role: "admin",
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-  "user@hyperfitness.io": {
-    password: "user123",
-    id: "demo-user-001",
-    email: "user@hyperfitness.io",
-    full_name: "Sam Member",
-    role: "user",
-    is_active: true,
-    created_at: new Date().toISOString(),
-    updated_at: new Date().toISOString(),
-  },
-};
-
 interface AuthState {
   user: AuthUser | null;
   accessToken: string | null;
@@ -37,6 +13,7 @@ interface AuthState {
   isLoading: boolean;
   error: string | null;
 
+  // Actions
   login: (credentials: LoginCredentials) => Promise<void>;
   register: (payload: RegisterPayload) => Promise<void>;
   logout: () => void;
@@ -57,27 +34,8 @@ export const useAuthStore = create<AuthState>()(
 
       login: async (credentials) => {
         set({ isLoading: true, error: null });
-
-        // ── Demo Mode bypass ──────────────────────────────
-        const demoEntry = DEMO_USERS[credentials.email];
-        if (demoEntry && demoEntry.password === credentials.password) {
-          await new Promise((r) => setTimeout(r, 700)); // Simulate network
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const { password: _pw, ...user } = demoEntry;
-          set({
-            user,
-            accessToken: "demo-access-token",
-            refreshToken: "demo-refresh-token",
-            isAuthenticated: true,
-            isLoading: false,
-            error: null,
-          });
-          return;
-        }
-        // ─────────────────────────────────────────────────
-
         try {
-          // FastAPI OAuth2 expects form data
+          // FastAPI OAuth2 expects form data for /auth/login
           const formData = new URLSearchParams();
           formData.append("username", credentials.email);
           formData.append("password", credentials.password);
@@ -88,9 +46,11 @@ export const useAuthStore = create<AuthState>()(
             { headers: { "Content-Type": "application/x-www-form-urlencoded" } }
           );
 
+          // Store tokens
           localStorage.setItem("hf_access_token", tokens.access_token);
           localStorage.setItem("hf_refresh_token", tokens.refresh_token);
 
+          // Fetch user profile
           const { data: user } = await apiClient.get<AuthUser>("/auth/me", {
             headers: { Authorization: `Bearer ${tokens.access_token}` },
           });
@@ -140,7 +100,7 @@ export const useAuthStore = create<AuthState>()(
 
       refreshAuth: async () => {
         const { refreshToken } = get();
-        if (!refreshToken || refreshToken === "demo-refresh-token") return;
+        if (!refreshToken) return;
 
         try {
           const { data } = await apiClient.post<AuthTokens>("/auth/refresh", {
