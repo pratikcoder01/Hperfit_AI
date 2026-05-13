@@ -8,7 +8,7 @@ import {
   BarChart3, Settings, Zap, ChevronLeft, ChevronRight,
   ShieldCheck, LogOut, Brain, Salad, MessageSquare, Sparkles,
   Camera, Activity, Globe, TrendingUp, Smartphone, Building2,
-  Mic, Trophy, Medal, Cpu, Network, Orbit, Rocket
+  Mic, Trophy, Medal, Cpu, Network, Orbit, Rocket, Infinity
 } from "lucide-react";
 import { useAuthStore } from "@/store/authStore";
 import { cn, getInitials, getAvatarColor } from "@/lib/utils";
@@ -63,9 +63,10 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    label: "Cosmic AGI (Phases 6-9)",
+    label: "Superintelligence (Phases 6-10)",
     aiSection: true,
     items: [
+      { label: "Transcendent Nexus", href: "/dashboard/transcendent", icon: Infinity, badge: "PHASE 10" },
       { label: "Cosmic Network", href: "/dashboard/cosmic", icon: Rocket, badge: "PHASE 9" },
       { label: "Universal Matrix", href: "/dashboard/universal", icon: Orbit, badge: "PHASE 8" },
       { label: "Neural Hub", href: "/dashboard/neural", icon: Network, badge: "PHASE 7" },
