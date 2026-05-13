@@ -63,8 +63,12 @@ class HyperCoachGraph:
 
     def _format_context(self, state: AgentState) -> str:
         ctx = state.get("user_context", {})
-        return f"Age: {ctx.get('age', 'Unknown')}, Goal: {ctx.get('goal', 'Unknown')}, " \
-               f"Injuries: {ctx.get('injuries', 'None')}"
+        base_ctx = f"Age: {ctx.get('age', 'Unknown')}, Goal: {ctx.get('goal', 'Unknown')}, Injuries: {ctx.get('injuries', 'None')}"
+        
+        memory_ctx = ctx.get("long_term_memory", "")
+        if memory_ctx and memory_ctx != "Memory system offline.":
+            return f"{base_ctx}\n\n{memory_ctx}"
+        return base_ctx
 
     # --- AGENT NODES ---
 
