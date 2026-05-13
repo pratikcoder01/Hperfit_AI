@@ -68,6 +68,7 @@ const navSections: NavSection[] = [
     items: [
       { label: "HyperCoach Live", href: "/dashboard/hypercoach", icon: Zap, badge: "NEW" },
       { label: "A.I. Vision Scanner", href: "/dashboard/scanner", icon: Camera, badge: "LIVE" },
+      { label: "Live Voice Agent", href: "/dashboard/voice", icon: Mic, badge: "BETA" },
       { label: "Transcendent Nexus", href: "/dashboard/transcendent", icon: Infinity, badge: "PHASE 10" },
       { label: "Cosmic Network", href: "/dashboard/cosmic", icon: Rocket, badge: "PHASE 9" },
       { label: "Universal Matrix", href: "/dashboard/universal", icon: Orbit, badge: "PHASE 8" },
